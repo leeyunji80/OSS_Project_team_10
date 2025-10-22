@@ -8,8 +8,14 @@ void PrintPrime(int n1){
   //현석님 파트
 }
 
-int FindLcm(int n1, int n2){
-  //도현님 파트
+int Findlcm(int a, int b) {
+    int k = a;
+    int j = b;
+    while (k != j) {
+        if (k < j)k += a;
+        if (k > j)j += b;
+    }
+    return k;
 }
 
 int main(){
