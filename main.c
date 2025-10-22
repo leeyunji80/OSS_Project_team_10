@@ -23,15 +23,15 @@ int main(){
   int gcd = 0, lcm = 0;
 
   printf("Enter two integers>>");
-  scanf("%d %d", &n1, &n2);
+  scanf("%d%d", &n1, &n2);
 
   if(n2 > n1){
-    int tmp = n2;
+    int tmp = n1;
     n1 = n2;
     n2 = tmp;
   }
 
-  pinrtf("\nPrime numbers>>");
+  printf("\nPrime numbers>>");
   PrintPrime(n2);
   gcd = FindGcd(n1, n2);
   lcm = Findlcm(n1, n2);
