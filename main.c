@@ -1,8 +1,27 @@
 #inlcude <stdio.h>
 //각 함수는 자유롭게 변경 가능합니다
 int FindGcd(int n1, int n2){
-  //서진님 파트
+  int temp;
+  while(n2!=0){
+    temp=n2;
+    n2=n1%n2;
+    n1=temp;
+  }
+return n1;
+
+int main(){
+int n1,n2;
+
+while(1){
+printf("Enter two integers >>");
+scanf("%d %d", &n1, &n2);
+
+if(n1==0 && n2==0)
+  break;
+
+printf("GCD=%d \n\n", gcd(n1,n2));
 }
+return 0;
 
 void PrintPrime(int n1){
   //현석님 파트
