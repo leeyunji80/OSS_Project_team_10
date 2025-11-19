@@ -9,7 +9,7 @@
   },
   "keywords": ["omoku", "gomoku", "game", "ai", "minimax"],
   "author": "",
-  "license": "MIT",
+  "license": "GPL-3.0",
   "dependencies": {
     "express": "^4.18.2",
     "express-session": "^1.17.3",
