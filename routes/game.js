@@ -128,11 +128,11 @@ router.get('/load/:gameId', requireAuth, async (req, res) => {
             game: {
                 id: game.id,
                 gameName: game.game_name,
-                boardState: JSON.parse(game.board_state),
+                boardState: game.board_state,  // MySQL JSON 타입은 자동 파싱됨
                 currentPlayer: game.current_player,
                 gameMode: game.game_mode,
                 aiDifficulty: game.ai_difficulty,
-                moveHistory: JSON.parse(game.move_history || '[]')
+                moveHistory: game.move_history || []  // MySQL JSON 타입은 자동 파싱됨
             }
         });
     } catch (error) {
