@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>오목 게임</title>
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+    <div id="app">
+        <!-- 로그인/회원가입 화면 -->
+        <div id="auth-screen" class="screen">
+            <div class="auth-container">
+                <h1>오목 게임</h1>
+
+                <div class="tab-buttons">
+                    <button class="tab-btn active" data-tab="login">로그인</button>
+                    <button class="tab-btn" data-tab="register">회원가입</button>
+                </div>
+
+                <!-- 로그인 폼 -->
+                <form id="login-form" class="auth-form active">
+                    <h2>로그인</h2>
+                    <input type="text" id="login-username" placeholder="사용자명" required>
+                    <input type="password" id="login-password" placeholder="비밀번호" required>
+                    <button type="submit">로그인</button>
+                    <div class="error-message" id="login-error"></div>
+                </form>
+
+                <!-- 회원가입 폼 -->
+                <form id="register-form" class="auth-form">
+                    <h2>회원가입</h2>
+                    <input type="text" id="register-username" placeholder="사용자명" required>
+                    <input type="password" id="register-password" placeholder="비밀번호" required>
+                    <input type="email" id="register-email" placeholder="이메일 (선택)">
+                    <button type="submit">회원가입</button>
+                    <div class="error-message" id="register-error"></div>
+                </form>
+            </div>
+        </div>
+
+        <!-- 메인 메뉴 화면 -->
+        <div id="menu-screen" class="screen" style="display: none;">
+            <div class="menu-container">
+                <h1>오목 게임</h1>
+                <div class="user-info">
+                    <span id="current-user"></span>
+                    <button id="logout-btn" class="small-btn">로그아웃</button>
+                </div>
+
+                <div class="menu-buttons">
+                    <button class="menu-btn" id="ai-game-btn">AI 대전</button>
+                    <button class="menu-btn" id="pvp-game-btn">1:1 대전</button>
+                    <button class="menu-btn" id="load-game-btn">게임 불러오기</button>
+                    <button class="menu-btn" id="stats-btn">전적 보기</button>
+                    <button class="menu-btn" id="leaderboard-btn">리더보드</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- AI 난이도 선택 화면 -->
+        <div id="difficulty-screen" class="screen" style="display: none;">
+            <div class="difficulty-container">
+                <h2>AI 난이도 선택</h2>
+                <div class="difficulty-buttons">
+                    <button class="difficulty-btn" data-difficulty="easy">
+                        <h3>초급</h3>
+                        <p>쉬운 난이도</p>
+                    </button>
+                    <button class="difficulty-btn" data-difficulty="medium">
+                        <h3>중급</h3>
+                        <p>보통 난이도</p>
+                    </button>
+                    <button class="difficulty-btn" data-difficulty="hard">
+                        <h3>고급</h3>
+                        <p>어려운 난이도</p>
+                    </button>
+                </div>
+                <button id="back-to-menu-btn" class="back-btn">메인 메뉴로</button>
+            </div>
+        </div>
+
+        <!-- 게임 화면 -->
+        <div id="game-screen" class="screen" style="display: none;">
+            <div class="game-container">
+                <div class="game-header">
+                    <div class="game-info">
+                        <h3 id="game-mode-title">AI 대전</h3>
+                        <p id="current-turn">흑돌 차례</p>
+                    </div>
+                    <div class="game-controls">
+                        <button id="save-game-btn" class="control-btn">저장</button>
+                        <button id="surrender-btn" class="control-btn">기권</button>
+                        <button id="exit-game-btn" class="control-btn">나가기</button>
+                    </div>
+                </div>
+
+                <div id="board-container">
+                    <canvas id="game-board" width="600" height="600"></canvas>
+                </div>
+
+                <div class="game-status">
+                    <p id="status-message">게임을 시작합니다!</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- 저장된 게임 목록 화면 -->
+        <div id="saved-games-screen" class="screen" style="display: none;">
+            <div class="saved-games-container">
+                <h2>저장된 게임</h2>
+                <div id="saved-games-list"></div>
+                <button id="back-from-saved-btn" class="back-btn">메인 메뉴로</button>
+            </div>
+        </div>
+
+        <!-- 통계 화면 -->
+        <div id="stats-screen" class="screen" style="display: none;">
+            <div class="stats-container">
+                <h2>전적 통계</h2>
+                <div id="stats-content"></div>
+                <div class="recent-games">
+                    <h3>최근 게임</h3>
+                    <div id="recent-games-list"></div>
+                </div>
+                <button id="back-from-stats-btn" class="back-btn">메인 메뉴로</button>
+            </div>
+        </div>
+
+        <!-- 리더보드 화면 -->
+        <div id="leaderboard-screen" class="screen" style="display: none;">
+            <div class="leaderboard-container">
+                <h2>리더보드</h2>
+                <div class="leaderboard-tabs">
+                    <button class="leaderboard-tab active" data-mode="overall">전체</button>
+                    <button class="leaderboard-tab" data-mode="pvp">1:1 대전</button>
+                    <button class="leaderboard-tab" data-mode="ai">AI 대전</button>
+                </div>
+                <div id="leaderboard-content"></div>
+                <button id="back-from-leaderboard-btn" class="back-btn">메인 메뉴로</button>
+            </div>
+        </div>
+
+        <!-- 대기 화면 (1:1 매칭) -->
+        <div id="waiting-screen" class="screen" style="display: none;">
+            <div class="waiting-container">
+                <h2>상대를 찾는 중...</h2>
+                <div class="spinner"></div>
+                <p>잠시만 기다려주세요</p>
+                <button id="cancel-match-btn" class="back-btn">취소</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 모달 -->
+    <div id="modal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <div id="modal-body"></div>
+        </div>
+    </div>
+
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="/js/api.js"></script>
+    <script src="/js/game.js"></script>
+    <script src="/js/ui.js"></script>
+    <script src="/js/main.js"></script>
+</body>
+</html>
