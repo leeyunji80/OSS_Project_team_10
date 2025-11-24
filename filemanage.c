@@ -4,6 +4,8 @@
 #include <string.h>
 #include "cJSON.h" 
 #include <time.h>
+#include <conio.h>
+#include <ctype.h>
 
 void update_game_result(const char* nickname, int did_win) {
     cJSON* root = NULL;
@@ -309,4 +311,37 @@ int LoadGame_R005(R005_SaveData* data) {
     fclose(fp);
 
     return 1;
+}
+
+void HandleExit_R006(const R005_SaveData* currentData) {
+    char key;
+
+    printf("\n  ========================================\n");
+    printf("  게임을 저장하시겠습니까? (Y/N) >> ");
+    
+    while (1) {
+        key = _getch();
+        key = toupper(key);
+
+        if (key == 'Y') {
+            printf(" 예(Y)\n");
+            SaveGame_R005(currentData);
+            exit(0);
+        }
+        else if (key == 'N') {
+            printf(" 아니오(N)\n");
+            exit(0);
+        }
+    }
+}
+
+void ResetGame_R006(R005_SaveData* data) {
+    for (int i = 0; i < SAVE_BOARD_SIZE; i++) {
+        for (int j = 0; j < SAVE_BOARD_SIZE; j++) {
+            data->board[i][j] = 0;
+        }
+    }
+
+    data->currentTurn = 1;
+    data->gameMode = 2;
 }
