@@ -210,3 +210,103 @@ void print_rankings() {
     free(players);
     cJSON_Delete(root);
 }
+
+#define SAVE_BOARD_SIZE 15
+#define MAX_SAVE_SLOTS 5
+#define LIST_FILENAME "save_list.txt"
+
+typedef struct {
+    int board[SAVE_BOARD_SIZE][SAVE_BOARD_SIZE];
+    int currentTurn;
+    int gameMode;
+} R005_SaveData;
+
+void _r005_get_filename(char* buffer) {
+    time_t t = time(NULL);
+    struct tm tm = *localtime(&t);
+    sprintf(buffer, "%04d%02d%02d_%02d%02d%02d.dat",
+        tm.tm_year + 1900, tm.tm_mon + 1, tm.tm_mday,
+        tm.tm_hour, tm.tm_min, tm.tm_sec);
+}
+
+void _r005_manage_fifo(const char* newFilename) {
+    char fileList[MAX_SAVE_SLOTS + 1][256];
+    int count = 0;
+    FILE* fp;
+
+    fp = fopen(LIST_FILENAME, "r");
+    if (fp != NULL) {
+        while (count < MAX_SAVE_SLOTS && fscanf(fp, "%s", fileList[count]) != EOF) {
+            count++;
+        }
+        fclose(fp);
+    }
+
+    if (count >= MAX_SAVE_SLOTS) {
+        remove(fileList[0]);
+        for (int i = 0; i < count - 1; i++) {
+            strcpy(fileList[i], fileList[i + 1]);
+        }
+        count--;
+    }
+
+    strcpy(fileList[count], newFilename);
+    count++;
+
+    fp = fopen(LIST_FILENAME, "w");
+    if (fp != NULL) {
+        for (int i = 0; i < count; i++) {
+            fprintf(fp, "%s\n", fileList[i]);
+        }
+        fclose(fp);
+    }
+}
+
+void SaveGame_R005(const R005_SaveData* data) {
+    char filename[256];
+    _r005_get_filename(filename);
+
+    FILE* fp = fopen(filename, "wb");
+    if (fp == NULL) {
+        return;
+    }
+    fwrite(data, sizeof(R005_SaveData), 1, fp);
+    fclose(fp);
+
+    _r005_manage_fifo(filename);
+}
+
+int LoadGame_R005(R005_SaveData* data) {
+    char fileList[MAX_SAVE_SLOTS][256];
+    int count = 0;
+    FILE* fp;
+
+    fp = fopen(LIST_FILENAME, "r");
+    if (fp == NULL) {
+        return 0;
+    }
+
+    while (count < MAX_SAVE_SLOTS && fscanf(fp, "%s", fileList[count]) != EOF) {
+        printf("%d. %s\n", count + 1, fileList[count]);
+        count++;
+    }
+    fclose(fp);
+
+    if (count == 0) return 0;
+
+    int choice;
+    scanf("%d", &choice);
+
+    if (choice < 1 || choice > count) return 0;
+
+    char* targetFile = fileList[choice - 1];
+    fp = fopen(targetFile, "rb");
+    if (fp == NULL) {
+        return 0;
+    }
+
+    fread(data, sizeof(R005_SaveData), 1, fp);
+    fclose(fp);
+
+    return 1;
+}
